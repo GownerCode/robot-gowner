@@ -1,0 +1,10 @@
+{
+    "prod": {
+        "movie_chat_channel": "movie chat channel ID",
+        "movie_info_channel": "movie info channel ID"
+    },
+    "dev": {
+        "movie_chat_channel": "movie chat channel ID",
+        "movie_info_channel": "movie info channel ID"
+    }
+}

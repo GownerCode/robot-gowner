@@ -1,0 +1,12 @@
+{
+	"prod": {
+		"clientId": "clientID",
+		"token": "clientToken",
+		"omdbtoken": "omdbToken"
+	},
+	"dev": {
+		"clientId": "clientID",
+		"token": "clientToken",
+		"omdbtoken": "omdbToken"
+	}
+}

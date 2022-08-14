@@ -1,0 +1,16 @@
+{
+    "prod": {
+        "movie_night_role_id": "movie night role ID (works best as a role called @Movie Night",
+        "movie_admin_role_ids": [
+            "admin role 1",
+            "admin role 2"
+        ]
+    },
+    "dev": {
+        "movie_night_role_id": "movie night role ID (works best as a role called @Movie Night",
+        "movie_admin_role_ids": [
+            "admin role 1",
+            "admin role 2"
+        ]
+    }
+}
