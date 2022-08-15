@@ -17,7 +17,7 @@ if (!fs.existsSync(errorlogpath)) {
 
 class Logger {
     constructor() {
-        this.timestamp = new Date().getTime();
+        this.timestamp = new Date().toISOString();
         this.ERROR = 'ERROR';
         this.OK = 'OK';
     }
@@ -29,14 +29,19 @@ class Logger {
             if (interaction.options.data.length > 0) {
                 optionstext = ' { '
                 for (let option in interaction.options.data) {
-                    optionstext += `${interaction.options.data[option].name}: ${interaction.options.data[option].value} `
+                    let val = interaction.options.data[option].value
+                    let opname = interaction.options.data[option].name
+                    if (opname === 'birthday') {
+                        val = '##-##-####';
+                    }
+                    optionstext += `${opname}: ${val}, `
                 }
                 optionstext += '}'
             }
-            this.logtext = `[ COMMAND ][${this.timestamp}][*status*] ${interaction.commandName}${optionstext} \| ${interaction.user.id} \| ${interaction.guild.id} \| ${interaction.channel.id}\n`
+            this.logtext = `[ COMMAND ][${this.timestamp}][*status*] /${interaction.commandName}${optionstext} \| ${interaction.user.tag} \| ${interaction.guild.name} \| ${interaction.channel.name}\n`
         }
         else if (interaction.isSelectMenu()) {
-            this.logtext = `[ SELECT  ][${this.timestamp}][*status*] ${interaction.customId} SELECTED: ${interaction.values[0]} \| ${interaction.user.id} \| ${interaction.guild.id} \| ${interaction.channel.id}\n`
+            this.logtext = `[ SELECT  ][${this.timestamp}][*status*] ${interaction.customId} SELECTED: ${interaction.values[0]} \| ${interaction.user.tag} \| ${interaction.guild.name} \| #${interaction.channel.name}\n`
         }
     }
 
@@ -48,11 +53,10 @@ class Logger {
             fs.appendFileSync(errorlogpath, `[${errorID}]: ${error.message}\n`);
             this.logtext = this.logtext.replace(/\*status\*/, `${this.ERROR}: ${errorID}`);
         } else if (status == this.OK) {
-            console.log('HERE NOW')
             this.logtext = this.logtext.replace(/\*status\*/, `${this.OK}`);
         }
         fs.appendFileSync(activitylogpath, this.logtext);
-        console.log(this.logtext);
+        console.log(this.logtext.slice(0, -1));
     }
 }
 
