@@ -5,6 +5,7 @@ const channels = require('../configuration/channels.json')[global.env];
 
 async function handler(interaction) {
     if (interaction.isSelectMenu()) {
+        await interaction.deferReply();
         const imdbid = interaction.values[0].split(',.-*')[0];
         var movie = await omdb.get({
             id: imdbid
@@ -12,6 +13,7 @@ async function handler(interaction) {
 
         var input = interaction.values[0].split(',.-*')[1];
     } else {
+        await interaction.deferReply();
         var input = interaction.options.getString('datetime')
     }
 

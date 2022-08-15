@@ -13,6 +13,7 @@ module.exports = {
                 .setDescription('The book you want to see info on. (Title)')
                 .setRequired(true)),
     async execute(interaction) {
+        await interaction.deferReply({ephemeral: true});
         const user = interaction.user;
         const input = interaction.options.getString('book');
 

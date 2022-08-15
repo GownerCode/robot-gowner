@@ -8,6 +8,7 @@ module.exports = {
         .setName('opensubs')
         .setDescription('Open submissions (Admins only)'),
     async execute(interaction) {
+        await interaction.deferReply();
         if (!util.userHasAdminRights(interaction.member)) {
             await interaction.followUp({ content: 'You do not have permission to use this command.' });
             return;

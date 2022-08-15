@@ -16,6 +16,7 @@ module.exports = {
                 .setDescription('The year in which the money was made (YYYY)')
                 .setRequired(true)),
     async execute(interaction) {
+        await interaction.deferReply();
         const amount = interaction.options.getInteger('amount');
         const year = interaction.options.getInteger('year');
 

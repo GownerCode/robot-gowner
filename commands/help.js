@@ -6,6 +6,7 @@ module.exports = {
         .setName('rghelp')
         .setDescription('Robot-Gowner help.'),
     async execute(interaction) {
+        await interaction.deferReply();
         await interaction.editReply(
             `Beep Boop! Greetings, human <@${interaction.user.id}>! I am **Robot-Gowner**, your friendly assistant!\n\n` +
             '**Movie commands:**\n' +

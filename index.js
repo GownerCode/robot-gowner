@@ -58,14 +58,10 @@ for (const file of commandFiles) {
 }
 
 client.on('interactionCreate', async interaction => {
+	var logger = new Logger()
 	if (interaction.isChatInputCommand()) {
-
 		const command = client.commands.get(interaction.commandName);
-
 		if (!command) return;
-		await interaction.deferReply();
-		var logger = new Logger()
-
 		try {
 			logger.logActivity(interaction);
 			await command.execute(interaction);
@@ -79,8 +75,6 @@ client.on('interactionCreate', async interaction => {
 		}
 	}
 	else if (interaction.isSelectMenu()) {
-		await interaction.deferReply();
-		var logger = new Logger()
 		try {
 			logger.logActivity(interaction);
 			await selecthandler(interaction);
@@ -88,7 +82,6 @@ client.on('interactionCreate', async interaction => {
 			return;
 
 		} catch (error) {
-			console.log("ERROEROPJDAPDJCAWPDOIJAWDPWAOIJD")
 			logger.updateStatus(logger.ERROR, error)
 			await interaction.editReply({ content: 'There was an error with this select menu. Please try again.', ephemeral: true });
 			return;

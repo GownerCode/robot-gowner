@@ -18,8 +18,6 @@ function lowestRated(n, places) {
     }
 }
 
-
-
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('movievote')
@@ -29,6 +27,7 @@ module.exports = {
                 .setDescription('The vote duration in hours')
                 .setRequired(true)),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true });
         const vote_duration = interaction.options.getNumber('duration');
         if (!util.userHasAdminRights(interaction.member)) {
             await interaction.editReply({ content: 'You do not have permission to use this command, you scoundrel.' });

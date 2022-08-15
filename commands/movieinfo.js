@@ -14,6 +14,7 @@ module.exports = {
                 .setDescription('The movie you want to see info on. (Title or IMDB Link)')
                 .setRequired(true)),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true });
 
         const user = interaction.user;
         const input = interaction.options.getString('movie');

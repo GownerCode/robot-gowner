@@ -7,6 +7,7 @@ module.exports = {
         .setName('movielist')
         .setDescription('Shows the current movie list for this month.'),
     async execute(interaction) {
+        await interaction.deferReply();
         let movielist = JSON.parse(fs.readFileSync('./lists/movies.json'));
         if (interaction.guild.id in movielist && movielist[interaction.guild.id]['movies'].length > 0) {
             movielist = movielist[interaction.guild.id]['movies'];

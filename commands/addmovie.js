@@ -20,6 +20,7 @@ module.exports = {
                 .setDescription('The user in whose name you are adding a movie (Admins only).')
                 .setRequired(false)),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true });
         if (!global.submitting && !global.polling) {
             await interaction.editReply({ content: `:robot: <@${interaction.user.id}> - Beep Boop! Submissions are currently closed. They will re-open next month!` });
             return;

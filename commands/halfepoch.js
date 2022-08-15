@@ -18,8 +18,11 @@ module.exports = {
                 .setDescription('If this is true, your half-epoch won\'t be shown in chat.')
                 .setRequired(true)),
     async execute(interaction) {
+
         const bdaystring = interaction.options.getString('birthday');
         const private = interaction.options.getBoolean('private');
+
+        await interaction.deferReply({ ephemeral: private });
 
         const bdayregex = /^\d{2}-\d{2}-\d{4}$/;
         if (!bdaystring.match(bdayregex)) {

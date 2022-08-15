@@ -11,6 +11,7 @@ module.exports = {
                 .setDescription('The user whose movie you are removing (Admins only).')
                 .setRequired(false)),
     async execute(interaction) {
+        await interaction.deferReply();
         if (interaction.options.getUser('user') !== null) {
             if (!util.userHasAdminRights(interaction.member)) {
                 if (interaction.options.getUser('user').id !== interaction.user.id) {

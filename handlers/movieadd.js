@@ -13,7 +13,6 @@ async function handler(interaction) {
     const usertag = interaction.values[0].split('+.-,')[3];
 
     const movielist = JSON.parse(fs.readFileSync('lists/movies.json'));
-    await interaction.update({ content: 'Movie selected.', components: [] });
     if (!(interaction.guild.id in movielist)) {
         movielist[interaction.guild.id] = {
             movies: []
@@ -27,7 +26,7 @@ async function handler(interaction) {
         year: year
     })
     fs.writeFileSync('lists/movies.json', JSON.stringify(movielist));
-    interaction.channel.send(`***${title}*** was added to the list by <@${userid}>!`);
+    interaction.reply(`***${title}*** was added to the list by <@${userid}>!`);
 }
 
 module.exports = { handler };

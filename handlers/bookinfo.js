@@ -21,7 +21,9 @@ function parseHTML(text) {
 }
 
 async function handler(interaction) {
-    const id = 'äpa#wdojaüpdawjd'//interaction.values[0];
+    await interaction.deferReply();
+
+    const id = interaction.values[0];
     const reply = await gbooks.lookup(id);
     const result = reply.result;
 

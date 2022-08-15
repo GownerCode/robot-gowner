@@ -7,6 +7,7 @@ module.exports = {
         .setName('closesubs')
         .setDescription('Close submissions (Admins only)'),
     async execute(interaction) {
+        await interaction.deferReply();
         if (!util.userHasAdminRights(interaction.member)) {
             await interaction.editReply({ content: 'You do not have permission to use this command.' });
             return;

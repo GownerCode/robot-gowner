@@ -5,6 +5,7 @@ const omdb = new (require('omdbapi'))(omdbtoken);
 
 async function handler(interaction, result) {
     if (!result) {
+        await interaction.deferReply();
         const imdbid = interaction.values[0].split('+.-,')[0];
         result = await omdb.get({
             id: imdbid
@@ -81,8 +82,12 @@ async function handler(interaction, result) {
         )
         .setTimestamp()
         .setFooter({ text: 'Beep Boop - A service provided by Robot-Gowner', iconURL: 'http://gownerjones.com/images/avatar.jpg' });
-
-    await interaction.editReply({ content: 'Info delivered.', ephemeral: true });
+    try {
+        await interaction.deleteReply();
+    }
+    catch (error) {
+        await interaction.editReply('Info delivered.');
+    }
     await interaction.channel.send({ embeds: [infoEmbed] });
 
     return;

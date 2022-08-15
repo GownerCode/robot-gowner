@@ -7,6 +7,7 @@ module.exports = {
         .setName('setwatched')
         .setDescription('Add movie to watched list.'),
     async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true });
         if (!util.userHasAdminRights(interaction.member)) {
             await interaction.editReply({ content: 'You do not have permission to use this command.' });
             return;

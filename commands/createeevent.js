@@ -12,7 +12,7 @@ module.exports = {
         .setDescription('Create a scheduled server event for the next movie night.')
         .addStringOption(option =>
             option.setName('datetime')
-                .setDescription('Set a specific date and time for this event.')
+                .setDescription('Set a specific date and time for this event ().')
                 .setRequired(false))
         .addStringOption(option =>
             option.setName('movie')
@@ -20,12 +20,14 @@ module.exports = {
                 .setRequired(false)),
 
     async execute(interaction) {
+
         if (!util.userHasAdminRights(interaction.member)) {
             await interaction.editReply({ content: 'You do not have permission to use this command.' });
             return;
         }
         const input = interaction.options.getString('movie');
         if (input) {
+            await interaction.deferReply({ ephemeral: true });
             const imdblinkpattern = /^(https?:\/\/)?(www\.)?imdb\.com.*/;
 
             if (input.match(imdblinkpattern)) {

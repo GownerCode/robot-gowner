@@ -7,6 +7,7 @@ module.exports = {
         .setName('watched')
         .setDescription('Shows all movies that have been watched so far.'),
     async execute(interaction) {
+        await interaction.deferReply();
         let movielist = JSON.parse(fs.readFileSync('./lists/viewed.json'));
         if (interaction.guild.id in movielist) {
             movielist = movielist[interaction.guild.id]['watched'];

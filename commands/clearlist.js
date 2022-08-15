@@ -7,6 +7,7 @@ module.exports = {
 		.setName('clearlist')
 		.setDescription('Empties the list for a new month (!WARNING!)'),
 	async execute(interaction) {
+		await interaction.deferReply();
 		if (!util.userHasAdminRights(interaction.member)) {
 			await interaction.editReply({ content: 'You do not have permission to use this command.' });
 			return;
