@@ -39,11 +39,11 @@ async function handler(interaction) {
     }
 
     var titleValue = `${result.title}${result.subtitle ? ': ' + result.subtitle : ''}`
-
+    titleValue = titleValue.length > 250 ? titleValue.slice(0, titleValue.slice(0, 250).lastIndexOf(' ')) + '...' : titleValue
+    console.log(result)
     if (result.description) {
         var description = parseHTML(result.description);
     }
-
 
     const infoEmbed = new EmbedBuilder()
         .setColor(0xff00e6)
@@ -57,9 +57,9 @@ async function handler(interaction) {
             { name: '\u200B', value: '\u200B' },
 
             { name: 'Author(s):', value: authorValue, inline: true },
-            { name: 'Publisher:', value: result.publisher, inline: true },
-            { name: 'Published:', value: result.publishedDate, inline: true },
-            { name: 'Pages:', value: `${result.pageCount ? result.pageCount : 'N/A'}`, inline: true },
+            { name: 'Publisher:', value: result.publisher != '' ? result.publisher : 'N/A', inline: true },
+            { name: 'Published:', value: result.publishedDate != '' ? result.publishedDate : 'N/A', inline: true },
+            { name: 'Pages:', value: result.pageCount ? result.pageCount.toString() : 'N/A', inline: true },
 
 
         )

@@ -10,20 +10,19 @@ module.exports = {
         .setDescription('Get information on a book from Google Books.')
         .addStringOption(option =>
             option.setName('book')
-                .setDescription('The book you want to see info on. (Title)')
+                .setDescription('The book you want to see info on. (Title / Author / ISBN or a combination)')
                 .setRequired(true)),
     async execute(interaction) {
-        await interaction.deferReply({ephemeral: true});
+        await interaction.deferReply({ ephemeral: true });
         const user = interaction.user;
         const input = interaction.options.getString('book');
-
-
 
         var query = interaction.options.getString('book');
         var searchoptions = {
             key: gbooksApi,
+            type: 'books',
+            order: 'relevance'
         };
-
 
         const reply = await gbooks.search(query, searchoptions);
 
@@ -53,7 +52,7 @@ module.exports = {
                     .setCustomId('bookinfo')
                     .setPlaceholder('Select book...')
                     .addOptions(options));
-        await interaction.editReply({ content: 'Which of these books do you want to know more about?', components: [row], ephemeral: true });
+        await interaction.editReply({ content: 'Which of these books do you want to know more about? If it is none of these, try adding the auther to your query.', components: [row], ephemeral: true });
         return;
 
     },

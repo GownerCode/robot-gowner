@@ -50,7 +50,7 @@ class Logger {
             let max = 99999;
             let min = 10000;
             let errorID = Math.floor(Math.random() * (max - min) + min);
-            fs.appendFileSync(errorlogpath, `[${errorID}]: ${error.message}\n`);
+            fs.appendFileSync(errorlogpath, `[${errorID}]: ${error.message} \| ${error.stack}\n`);
             this.logtext = this.logtext.replace(/\*status\*/, `${this.ERROR}: ${errorID}`);
         } else if (status == this.OK) {
             this.logtext = this.logtext.replace(/\*status\*/, `${this.OK}`);
