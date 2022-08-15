@@ -40,7 +40,7 @@ async function handler(interaction) {
 
     var titleValue = `${result.title}${result.subtitle ? ': ' + result.subtitle : ''}`
     titleValue = titleValue.length > 250 ? titleValue.slice(0, titleValue.slice(0, 250).lastIndexOf(' ')) + '...' : titleValue
-    console.log(result)
+
     if (result.description) {
         var description = parseHTML(result.description);
     }
