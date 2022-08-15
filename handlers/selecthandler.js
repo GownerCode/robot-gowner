@@ -16,9 +16,11 @@ async function selecthandler(interaction) {
     else if (interaction.customId === 'movieinfo') {
         await movieInfoHandler.handler(interaction);
     }
+
     else if (interaction.customId === 'eventmovie') {
         await createEventHandler.handler(interaction);
     }
+    
     else if (interaction.customId === 'bookinfo') {
         await bookInfoHandler.handler(interaction);
     }

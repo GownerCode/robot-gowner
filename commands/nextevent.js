@@ -13,6 +13,7 @@ module.exports = {
                 .setDescription('An option for admins to mention people. Just leave this blank ;)')
                 .setRequired(false)),
     async execute(interaction) {
+        await interaction.deferReply();
         if (!interaction.member.roles.cache.has('993328798227513384') && !interaction.member.roles.cache.has('1003394475621630032')) {
             var mention = false;
         } else {
@@ -33,6 +34,6 @@ module.exports = {
         }
         replyString +=
             `⁽ᵃˡˡ ᵗⁱᵐᵉˢ ᵃʳᵉ ⁱⁿ ʸᵒᵘʳ ˡᵒᶜᵃˡ ᵗⁱᵐᵉᶻᵒⁿᵉ⁾ ⁽ᵗʰᵉ ᵗⁱᵐᵉ ⁱⁿ ᵖᵃʳᵉⁿᵗʰᵉˢᵉˢ ʷⁱˡˡ ᶜᵒᵘⁿᵗ ᵈᵒʷⁿ ᵗᵒ ᵗʰᵉ ᵉᵛᵉⁿᵗ⁾`
-        interaction.reply(replyString)
+        interaction.editReply(replyString)
     },
 };

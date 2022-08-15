@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const { gbooksApi } = require('../configuration/access_config.json')[global.env];
 const util = require('../common/util.js')
-const gbooks = require('google-books-search');
+const gbooks = require('node-google-books-search-promise');
 
 function parseHTML(text) {
     text = text.replace(/<p>/g, '');
@@ -21,60 +21,54 @@ function parseHTML(text) {
 }
 
 async function handler(interaction) {
+    await interaction.deferReply();
+
     const id = interaction.values[0];
+    const reply = await gbooks.lookup(id);
+    const result = reply.result;
 
-    gbooks.lookup(id, async function (error, result) {
-        if (!error) {
-            var authorValue = '';
-            if (result.authors) {
-                result.authors.forEach(author => {
-                    authorValue += `${author}, `;
-                });
+    var authorValue = '';
+    if (result.authors) {
+        result.authors.forEach(author => {
+            authorValue += `${author}, `;
+        });
 
-                authorValue = authorValue.slice(0, -2);
-            } else {
-                authorValue = 'Anonymous'
-            }
+        authorValue = authorValue.slice(0, -2);
+    } else {
+        authorValue = 'Anonymous'
+    }
 
-            var titleValue = `${result.title}${result.subtitle ? ': ' + result.subtitle : ''}`
+    var titleValue = `${result.title}${result.subtitle ? ': ' + result.subtitle : ''}`
+    titleValue = titleValue.length > 250 ? titleValue.slice(0, titleValue.slice(0, 250).lastIndexOf(' ')) + '...' : titleValue
+    console.log(result)
+    if (result.description) {
+        var description = parseHTML(result.description);
+    }
 
-            if (result.description) {
-                var description = parseHTML(result.description);
-            }
+    const infoEmbed = new EmbedBuilder()
+        .setColor(0xff00e6)
+        .setTitle(titleValue)
+        .setAuthor({ name: result.authors ? result.authors[0] : 'Anonymous' })
+        .setImage(result.thumbnail)
+        .setURL(result.link)
+        .setThumbnail(result.thumbnail)
+        .addFields(
+            { name: 'Description:', value: description ? (description.length > 1000 ? description.slice(0, description.slice(0, 1000).lastIndexOf(' ')) + '...' : description) : 'N/A' },
+            { name: '\u200B', value: '\u200B' },
 
-            const infoEmbed = new EmbedBuilder()
-                .setColor(0xff00e6)
-                .setTitle(titleValue)
-                .setAuthor({ name: result.authors ? result.authors[0] : 'Anonymous' })
-                .setImage(result.thumbnail)
-                .setURL(result.link)
-                .setThumbnail(result.thumbnail)
-                .addFields(
-                    { name: 'Description:', value: description ? (description.length > 1000 ? description.slice(0, description.slice(0, 1000).lastIndexOf(' ')) + '...' : description) : 'N/A' },
-                    { name: '\u200B', value: '\u200B' },
-
-                    { name: 'Author(s):', value: authorValue, inline: true },
-                    { name: 'Publisher:', value: result.publisher, inline: true },
-                    { name: 'Published:', value: result.publishedDate, inline: true },
-                    { name: 'Pages:', value: `${result.pageCount ? result.pageCount : 'N/A'}`, inline: true },
-
-
-                )
-                .setTimestamp()
-                .setFooter({ text: 'powered by Robot-Gowner', iconURL: 'http://gownerjones.com/images/avatar.jpg' });
+            { name: 'Author(s):', value: authorValue, inline: true },
+            { name: 'Publisher:', value: result.publisher != '' ? result.publisher : 'N/A', inline: true },
+            { name: 'Published:', value: result.publishedDate != '' ? result.publishedDate : 'N/A', inline: true },
+            { name: 'Pages:', value: result.pageCount ? result.pageCount.toString() : 'N/A', inline: true },
 
 
-            await interaction.reply({ embeds: [infoEmbed] });
-            return;
-        } else {
-            console.log(error);
-            return;
-        }
-    });
+        )
+        .setTimestamp()
+        .setFooter({ text: 'powered by Robot-Gowner', iconURL: 'http://gownerjones.com/images/avatar.jpg' });
 
-
-
+    await interaction.editReply({ embeds: [infoEmbed] });
     return;
+
 }
 
 module.exports = { handler };

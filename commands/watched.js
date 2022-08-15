@@ -7,6 +7,7 @@ module.exports = {
         .setName('watched')
         .setDescription('Shows all movies that have been watched so far.'),
     async execute(interaction) {
+        await interaction.deferReply();
         let movielist = JSON.parse(fs.readFileSync('./lists/viewed.json'));
         if (interaction.guild.id in movielist) {
             movielist = movielist[interaction.guild.id]['watched'];
@@ -17,9 +18,9 @@ module.exports = {
                 liststring += `${x + 1}. ***${movielist[x].title} (${movielist[x].year})*** watched on <t:${date / 1000}:D>\n`;
             }
             liststring += `\n In total, **${movielist.length}** ${movielist.length > 1 ? 'movies' : 'movie'} ${movielist.length > 1 ? 'have' : 'has'} been watched.`
-            await interaction.reply(liststring);
+            await interaction.editReply(liststring);
         } else {
-            await interaction.reply(`No movies have been watched yet.`)
+            await interaction.editReply(`No movies have been watched yet.`)
         }
     },
 };

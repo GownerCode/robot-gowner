@@ -18,12 +18,15 @@ module.exports = {
                 .setDescription('If this is true, your half-epoch won\'t be shown in chat.')
                 .setRequired(true)),
     async execute(interaction) {
+
         const bdaystring = interaction.options.getString('birthday');
         const private = interaction.options.getBoolean('private');
 
+        await interaction.deferReply({ ephemeral: private });
+
         const bdayregex = /^\d{2}-\d{2}-\d{4}$/;
         if (!bdaystring.match(bdayregex)) {
-            await interaction.reply('Invalid date format for your birthday. Please format it like this: MM-DD-YYYY');
+            await interaction.editReply('Invalid date format for your birthday. Please format it like this: MM-DD-YYYY');
             return;
         }
         const bday = new Date(parseInt(bdaystring.split('-')[2]), parseInt(bdaystring.split('-')[0]) - 1, parseInt(bdaystring.split('-')[1]))
@@ -32,7 +35,7 @@ module.exports = {
         const c1 = bd + c2;
         const halfepoch = 2 * c1 - 2 * c2;
 
-        await interaction.reply({ content: `<@${interaction.user.id}>, your Half-Epoch is on <t:${halfepoch}:D>`, ephemeral: private })
+        await interaction.editReply({ content: `<@${interaction.user.id}>, your Half-Epoch is on <t:${halfepoch}:D>`, ephemeral: private })
         return;
     }
 };

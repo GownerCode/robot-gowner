@@ -1,13 +1,14 @@
 const fs = require('fs');
 
 async function handler(interaction) {
+    await interaction.deferReply();
 
     const title = interaction.values[0].split('+.-,')[1];
     const imdbid = interaction.values[0].split('+.-,')[0];
     const year = interaction.values[0].split('+.-,')[2];
     const viewedlist = JSON.parse(fs.readFileSync('lists/viewed.json'));
 
-    await interaction.update({ content: 'Movie selected.', components: [] });
+    await interaction.deleteReply();
 
     if (!(interaction.guild.id in viewedlist)) {
         viewedlist[interaction.guild.id] = {
@@ -17,7 +18,7 @@ async function handler(interaction) {
 
     for (let i = 0; i < viewedlist[interaction.guild.id]['watched'].length; i++) {
         if (viewedlist[interaction.guild.id]['watched'][i].imdbid === imdbid) {
-            interaction.channel.send(`***${title}*** has already been added to the watched list.`);
+            interaction.channel.send(`***${title}*** has *already* been added to the watched list.`);
             return;
         }
     }
