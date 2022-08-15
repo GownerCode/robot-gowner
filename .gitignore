@@ -3,3 +3,4 @@
 /node_modules/
 states.json
 package-lock.json
+/logs

@@ -6,7 +6,7 @@ module.exports = {
         .setName('rghelp')
         .setDescription('Robot-Gowner help.'),
     async execute(interaction) {
-        await interaction.reply(
+        await interaction.editReply(
             `Beep Boop! Greetings, human <@${interaction.user.id}>! I am **Robot-Gowner**, your friendly assistant!\n\n` +
             '**Movie commands:**\n' +
             'Use `/addmovie` to add a movie to the list. You can only add one per month, so make it count!\n' +

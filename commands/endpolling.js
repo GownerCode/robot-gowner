@@ -8,11 +8,11 @@ module.exports = {
         .setDescription('Close submissions (Admins only)'),
     async execute(interaction) {
         if (!util.userHasAdminRights(interaction.member)) {
-            await interaction.reply({ content: 'You do not have permission to use this command.' });
+            await interaction.editReply({ content: 'You do not have permission to use this command.' });
             return;
         }
         global.polling = false;
-        await interaction.reply(`Polling state ended.`);
+        await interaction.editReply(`Polling state ended.`);
         return;
     },
 };

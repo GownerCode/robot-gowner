@@ -1,4 +1,4 @@
-global.env = "prod";
+global.env = "dev";
 
 const fs = require('fs');
 const path = require('path');
@@ -7,6 +7,7 @@ const { token, omdbtoken } = require('./configuration/access_config.json')[globa
 const omdb = new (require('omdbapi'))(omdbtoken);
 const util = require('./common/util.js');
 const { selecthandler } = require('./handlers/selecthandler.js');
+const { Logger } = require('./common/logger.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions] });
 
@@ -62,23 +63,34 @@ client.on('interactionCreate', async interaction => {
 		const command = client.commands.get(interaction.commandName);
 
 		if (!command) return;
+		await interaction.deferReply();
+		var logger = new Logger()
 
 		try {
-			console.log(`${interaction.user.tag} (${interaction.user.id}) used /${interaction.commandName} on ${interaction.guild.name} in ${interaction.channel.name}`);
+			logger.logActivity(interaction);
 			await command.execute(interaction);
+			logger.updateStatus(logger.OK);
+			return;
+
 		} catch (error) {
-			console.error(error);
-			await interaction.reply({ content: 'There was an error while executing this command. Please try aai', ephemeral: true });
+			logger.updateStatus(logger.ERROR, error)
+			await interaction.editReply({ content: 'There was an error while executing this command. Please try again.', ephemeral: true });
+			return;
 		}
 	}
 	else if (interaction.isSelectMenu()) {
+		await interaction.deferReply();
+		var logger = new Logger()
 		try {
-			console.log(`${interaction.user.tag} (${interaction.user.id}) used SELECT '${interaction.customId}' on ${interaction.guild.name} in ${interaction.channel.name}`);
+			logger.logActivity(interaction);
 			await selecthandler(interaction);
+			logger.updateStatus(logger.OK);
 			return;
+
 		} catch (error) {
-			console.error(error);
-			await interaction.reply({ content: 'There was an error with this select menu. Please try again.', ephemeral: true });
+			console.log("ERROEROPJDAPDJCAWPDOIJAWDPWAOIJD")
+			logger.updateStatus(logger.ERROR, error)
+			await interaction.editReply({ content: 'There was an error with this select menu. Please try again.', ephemeral: true });
 			return;
 		}
 

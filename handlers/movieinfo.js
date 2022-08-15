@@ -82,7 +82,7 @@ async function handler(interaction, result) {
         .setTimestamp()
         .setFooter({ text: 'Beep Boop - A service provided by Robot-Gowner', iconURL: 'http://gownerjones.com/images/avatar.jpg' });
 
-    await interaction.reply({ content: 'Info delivered.', ephemeral: true });
+    await interaction.editReply({ content: 'Info delivered.', ephemeral: true });
     await interaction.channel.send({ embeds: [infoEmbed] });
 
     return;

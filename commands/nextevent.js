@@ -33,6 +33,6 @@ module.exports = {
         }
         replyString +=
             `⁽ᵃˡˡ ᵗⁱᵐᵉˢ ᵃʳᵉ ⁱⁿ ʸᵒᵘʳ ˡᵒᶜᵃˡ ᵗⁱᵐᵉᶻᵒⁿᵉ⁾ ⁽ᵗʰᵉ ᵗⁱᵐᵉ ⁱⁿ ᵖᵃʳᵉⁿᵗʰᵉˢᵉˢ ʷⁱˡˡ ᶜᵒᵘⁿᵗ ᵈᵒʷⁿ ᵗᵒ ᵗʰᵉ ᵉᵛᵉⁿᵗ⁾`
-        interaction.reply(replyString)
+        interaction.editReply(replyString)
     },
 };

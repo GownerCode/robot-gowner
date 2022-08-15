@@ -8,11 +8,11 @@ module.exports = {
         .setDescription('Close submissions (Admins only)'),
     async execute(interaction) {
         if (!util.userHasAdminRights(interaction.member)) {
-            await interaction.reply({ content: 'You do not have permission to use this command.' });
+            await interaction.editReply({ content: 'You do not have permission to use this command.' });
             return;
         }
         global.submitting = false;
-        await interaction.reply(`Submissions for the month of ${util.months[new Date().getMonth()]} are now closed!`);
+        await interaction.editReply(`Submissions for the month of ${util.months[new Date().getMonth()]} are now closed!`);
         return;
     },
 };

@@ -14,7 +14,7 @@ module.exports = {
         if (interaction.options.getUser('user') !== null) {
             if (!util.userHasAdminRights(interaction.member)) {
                 if (interaction.options.getUser('user').id !== interaction.user.id) {
-                    await interaction.reply({ content: `<@${interaction.user.id}> - Only admins can remove another user's movie! Beep Boop!` });
+                    await interaction.editReply({ content: `<@${interaction.user.id}> - Only admins can remove another user's movie! Beep Boop!` });
                     return;
                 } else {
                     var user = interaction.options.getUser('user');
@@ -28,10 +28,10 @@ module.exports = {
 
         const removed = util.removeMovieByUser(interaction, user.id);
         if (removed) {
-            await interaction.reply(`<@${user.id}>, your movie, ***${removed.title} (${removed.year})***  has been removed from the list!`);
+            await interaction.editReply(`<@${user.id}>, your movie, ***${removed.title} (${removed.year})***  has been removed from the list!`);
             return;
         } else {
-            await interaction.reply(`You have not added a movie to the list this month, <@${user.id}>.`);
+            await interaction.editReply(`You have not added a movie to the list this month, <@${user.id}>.`);
             return;
         }
     },

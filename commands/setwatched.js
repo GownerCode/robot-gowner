@@ -8,7 +8,7 @@ module.exports = {
         .setDescription('Add movie to watched list.'),
     async execute(interaction) {
         if (!util.userHasAdminRights(interaction.member)) {
-            await interaction.reply({ content: 'You do not have permission to use this command.' });
+            await interaction.editReply({ content: 'You do not have permission to use this command.' });
             return;
         }
         const movielist = JSON.parse(fs.readFileSync('./lists/movies.json'));
@@ -26,9 +26,9 @@ module.exports = {
                         .setCustomId('moviewatched')
                         .setPlaceholder('Nothing selected')
                         .addOptions(options));
-            await interaction.reply({ content: 'Which movie did you watch?', components: [row], ephemeral: true });
+            await interaction.editReply({ content: 'Which movie did you watch?', components: [row], ephemeral: true });
         } else {
-            await interaction.reply('There are no movies on the list!');
+            await interaction.editReply('There are no movies on the list!');
         }
     },
 };

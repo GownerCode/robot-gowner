@@ -20,7 +20,7 @@ async function handler(interaction) {
     if (input != 'null' && input != null) {
         const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
         if (!input.match(regex)) {
-            await interaction.reply(`Invalid date: ${input}`);
+            await interaction.editReply(`Invalid date: ${input}`);
             return;
         } else {
             next = new Date(input).getTime();
@@ -41,10 +41,10 @@ async function handler(interaction) {
                         `We will be watching **${global.nextmovie.title} (${global.nextmovie.year})**.\n` +
                         `Just hop on the movie voice channel to watch with us. See you then!`
                 });
-                await interaction.reply(`The event has been updated with the movie **${global.nextmovie.title} (${global.nextmovie.year})**.`);
+                await interaction.editReply(`The event has been updated with the movie **${global.nextmovie.title} (${global.nextmovie.year})**.`);
                 return;
             }
-            await interaction.reply(`There is already a Movie Night scheduled for <t:${next / 1000}:f>.`);
+            await interaction.editReply(`There is already a Movie Night scheduled for <t:${next / 1000}:f>.`);
             return;
         }
     }
@@ -74,7 +74,7 @@ async function handler(interaction) {
         reason: `The /createevent command was used by ${interaction.user.tag}.`,
         image: 'http://gownerjones.com/images/movienight.png'
     });
-    await interaction.reply(`${event.name} was scheduled for <t:${Math.floor(event.scheduledStartTimestamp / 1000)}:f>`);
+    await interaction.editReply(`${event.name} was scheduled for <t:${Math.floor(event.scheduledStartTimestamp / 1000)}:f>`);
     return;
 }
 

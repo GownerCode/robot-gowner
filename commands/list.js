@@ -15,9 +15,9 @@ module.exports = {
                 liststring += `${x + 1}. ***${movielist[x].title} (${movielist[x].year})*** submitted by ${movielist[x].usertag}\n`;
             }
             liststring += `\n In total, **${movielist.length}** ${movielist.length > 1 ? 'movies' : 'movie'} ${movielist.length > 1 ? 'have' : 'has'} been submitted in ${util.months[new Date().getMonth()]}.`
-            await interaction.reply(liststring);
+            await interaction.editReply(liststring);
         } else {
-            await interaction.reply(`No movies have been submitted in ${util.months[new Date().getMonth()]} yet.`)
+            await interaction.editReply(`No movies have been submitted in ${util.months[new Date().getMonth()]} yet.`)
         }
     },
 };

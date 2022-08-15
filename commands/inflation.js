@@ -20,7 +20,7 @@ module.exports = {
         const year = interaction.options.getInteger('year');
 
         if (year < 1913 || year > new Date().getFullYear()) {
-            await interaction.reply(`The year must be between 1913 and ${new Date().getFullYear()}.`);
+            await interaction.editReply(`The year must be between 1913 and ${new Date().getFullYear()}.`);
             return;
         }
 
@@ -46,7 +46,7 @@ module.exports = {
 
         const newamountFormatted = `${newamountFirstPart}${newamountSecondPart != '' ? '.' + newamountSecondPart : ''}`
 
-        await interaction.reply(`$${amountFormatted} in ${year} has the buying power of $${newamountFormatted} today.`);
+        await interaction.editReply(`$${amountFormatted} in ${year} has the buying power of $${newamountFormatted} today.`);
         return;
     },
 };

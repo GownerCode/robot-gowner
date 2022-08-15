@@ -2,7 +2,7 @@ const { SlashCommandBuilder, ActionRowBuilder, SelectMenuBuilder } = require('di
 const fs = require('fs');
 const util = require('../common/util.js');
 const { gbooksApi } = require('../configuration/access_config.json')[global.env];
-const gbooks = require('google-books-search');
+const gbooks = require('node-google-books-search-promise');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -19,43 +19,41 @@ module.exports = {
 
 
         var query = interaction.options.getString('book');
-        var options = {
+        var searchoptions = {
             key: gbooksApi,
         };
-        gbooks.search(query, options, async function (error, result, apiResponse) {
-            if (!error) {
-                if (result.length < 1) {
-                    await interaction.reply(`No books found for your query \`\`${query}\`\`. Please try again.`);
-                    return;
-                }
-                let options = [];
-                let ids = [];
-                for (const [key, suggestion] of Object.entries(result)) {
-                    if (ids.includes(suggestion.id)) {
-                        continue;
-                    }
-                    options.push({
-                        label: `${suggestion.title.length > 50 ? suggestion.title.slice(0, 50) : suggestion.title}${suggestion.authors ? ' by ' + (suggestion.authors[0].length > 50 ? suggestion.authors[0].slice(0, 50) : suggestion.authors[0]) : ''}`,
-                        value: `${suggestion.id}`
-                    });
 
-                    ids.push(suggestion.id);
 
-                }
+        const reply = await gbooks.search(query, searchoptions);
 
-                const row = new ActionRowBuilder()
-                    .addComponents(
-                        new SelectMenuBuilder()
-                            .setCustomId('bookinfo')
-                            .setPlaceholder('Select book...')
-                            .addOptions(options));
-                await interaction.reply({ content: 'Which of these books do you want to know more about?', components: [row], ephemeral: true });
-                return;
-            } else {
-                console.log(error);
-                return;
+        const result = reply.results;
+        if (result.length < 1) {
+            await interaction.editReply(`No books found for your query \`\`${query}\`\`. Please try again.`);
+            return;
+        }
+        let options = [];
+        let ids = [];
+        for (const [key, suggestion] of Object.entries(result)) {
+            if (ids.includes(suggestion.id)) {
+                continue;
             }
-        });
+            options.push({
+                label: `${suggestion.title.length > 50 ? suggestion.title.slice(0, 50) : suggestion.title}${suggestion.authors ? ' by ' + (suggestion.authors[0].length > 50 ? suggestion.authors[0].slice(0, 50) : suggestion.authors[0]) : ''}`,
+                value: `${suggestion.id}`
+            });
+
+            ids.push(suggestion.id);
+
+        }
+
+        const row = new ActionRowBuilder()
+            .addComponents(
+                new SelectMenuBuilder()
+                    .setCustomId('bookinfo')
+                    .setPlaceholder('Select book...')
+                    .addOptions(options));
+        await interaction.editReply({ content: 'Which of these books do you want to know more about?', components: [row], ephemeral: true });
+        return;
 
     },
 };

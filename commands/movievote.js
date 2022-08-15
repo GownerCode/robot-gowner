@@ -31,7 +31,7 @@ module.exports = {
     async execute(interaction) {
         const vote_duration = interaction.options.getNumber('duration');
         if (!util.userHasAdminRights(interaction.member)) {
-            await interaction.reply({ content: 'You do not have permission to use this command, you scoundrel.' });
+            await interaction.editReply({ content: 'You do not have permission to use this command, you scoundrel.' });
             return;
         }
         const movielist = JSON.parse(fs.readFileSync('./lists/movies.json'))[interaction.guild.id]['movies'];
@@ -55,7 +55,7 @@ module.exports = {
             .setTimestamp()
             .setFooter({ text: 'Beep Boop - A service provided by Robot-Gowner', iconURL: 'http://gownerjones.com/images/avatar.jpg' });
 
-        await interaction.reply({ content: 'Creating poll...', ephemeral: true });
+        await interaction.editReply({ content: 'Creating poll...', ephemeral: true });
         await interaction.channel.send(`<@&${roles.movie_night_role_id}>`);
         var message = await interaction.channel.send({ embeds: [movieVote] });
 

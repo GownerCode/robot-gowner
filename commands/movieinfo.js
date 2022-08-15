@@ -14,6 +14,7 @@ module.exports = {
                 .setDescription('The movie you want to see info on. (Title or IMDB Link)')
                 .setRequired(true)),
     async execute(interaction) {
+
         const user = interaction.user;
         const input = interaction.options.getString('movie');
         const imdblinkpattern = /^(https?:\/\/)?(www\.)?imdb\.com.*/;
@@ -23,7 +24,7 @@ module.exports = {
             const query = util.parseIMDBLink(input);
 
             if (!query) {
-                await interaction.reply({ content: `Invalid IMDb link. Please double check you're adding a movie and not a TV show or other media.` });
+                await interaction.editReply({ content: `Invalid IMDb link. Please double check you're adding a movie and not a TV show or other media.` });
                 return;
             }
 
@@ -39,7 +40,7 @@ module.exports = {
             }
 
             if (!result) {
-                await interaction.reply({ content: `An error ocurred while retrieving your movie: \`\`${IMDBError.message}\`\`` });
+                await interaction.editReply({ content: `An error ocurred while retrieving your movie: \`\`${IMDBError.message}\`\`` });
                 return;
             }
 
@@ -65,11 +66,11 @@ module.exports = {
                             .setCustomId('movieinfo')
                             .setPlaceholder('Select movie...')
                             .addOptions(options));
-                interaction.reply({ content: 'Which of these movies do you want to know more about?', components: [row], ephemeral: true });
+                interaction.editReply({ content: 'Which of these movies do you want to know more about?', components: [row], ephemeral: true });
                 return;
 
             }).catch(function (error) {
-                interaction.reply({ content: `No movies found for query "${query}". Please try again. (Internal Error: \`\`${error.message}\`\`)` });
+                interaction.editReply({ content: `No movies found for query "${query}". Please try again. (Internal Error: \`\`${error.message}\`\`)` });
             })
         }
     },
