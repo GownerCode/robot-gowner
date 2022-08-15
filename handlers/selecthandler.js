@@ -6,21 +6,21 @@ const bookInfoHandler = require('./bookinfo.js');
 
 async function selecthandler(interaction) {
     if (interaction.customId === 'movieadd') {
-        movieAddHandler.handler(interaction);
+        await movieAddHandler.handler(interaction);
     }
 
     else if (interaction.customId === 'moviewatched') {
-        movieWatchedHandler.handler(interaction);
+        await movieWatchedHandler.handler(interaction);
     }
 
     else if (interaction.customId === 'movieinfo') {
-        movieInfoHandler.handler(interaction);
+        await movieInfoHandler.handler(interaction);
     }
     else if (interaction.customId === 'eventmovie') {
-        createEventHandler.handler(interaction);
+        await createEventHandler.handler(interaction);
     }
     else if (interaction.customId === 'bookinfo') {
-        bookInfoHandler.handler(interaction);
+        await bookInfoHandler.handler(interaction);
     }
 }
 

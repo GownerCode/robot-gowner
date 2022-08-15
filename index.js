@@ -1,4 +1,4 @@
-global.env = "prod";
+global.env = "dev";
 
 const fs = require('fs');
 const path = require('path');
@@ -64,15 +64,24 @@ client.on('interactionCreate', async interaction => {
 		if (!command) return;
 
 		try {
-			console.log(`${interaction.user.tag} (${interaction.user.id}) used /${interaction.commandName} on ${interaction.guild.name}`);
+			console.log(`${interaction.user.tag} (${interaction.user.id}) used /${interaction.commandName} on ${interaction.guild.name} in ${interaction.channel.name}`);
 			await command.execute(interaction);
 		} catch (error) {
 			console.error(error);
-			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+			await interaction.reply({ content: 'There was an error while executing this command. Please try aai', ephemeral: true });
 		}
 	}
 	else if (interaction.isSelectMenu()) {
-		selecthandler(interaction);
+		try {
+			console.log(`${interaction.user.tag} (${interaction.user.id}) used SELECT '${interaction.customId}' on ${interaction.guild.name} in ${interaction.channel.name}`);
+			await selecthandler(interaction);
+			return;
+		} catch (error) {
+			console.error(error);
+			await interaction.reply({ content: 'There was an error with this select menu. Please try again.', ephemeral: true });
+			return;
+		}
+
 	}
 
 	else {
