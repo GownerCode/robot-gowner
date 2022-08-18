@@ -1,4 +1,4 @@
-global.env = "prod";
+global.env = 'prod';
 
 const fs = require('fs');
 const path = require('path');
@@ -8,6 +8,8 @@ const omdb = new (require('omdbapi'))(omdbtoken);
 const util = require('./common/util.js');
 const { selecthandler } = require('./handlers/selecthandler.js');
 const { Logger } = require('./common/logger.js');
+
+global.startUpTime = new Date();
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions] });
 
