@@ -1,4 +1,4 @@
-global.env = "prod";
+global.env = 'prod';
 
 const fs = require('fs');
 const path = require('path');
