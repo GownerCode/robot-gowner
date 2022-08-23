@@ -145,7 +145,7 @@ function startupInfo(client) {
     for (let command of client.commands) {
         console.log(`/${command[1].data.name}: ${command[1].data.description}`)
     }
-    console.log('\n');
+    console.log(`Environment: ${global.env}`);
 }
 
 function nextDay(x) {

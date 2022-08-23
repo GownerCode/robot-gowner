@@ -1,4 +1,13 @@
-global.env = 'prod';
+const { exit } = require('process');
+require('dotenv').config();
+if (process.env.ENVIRONMENT === 'development') {
+	global.env = 'dev';
+} else if (process.env.ENVIRONMENT === 'production') {
+	global.env = 'prod';
+} else {
+	console.log('Environment not set or .env not found. Exiting.');
+	exit(0);
+}
 
 const fs = require('fs');
 const path = require('path');
