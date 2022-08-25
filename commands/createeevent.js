@@ -1,10 +1,8 @@
 const { SlashCommandBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js');
-const fs = require('fs');
 const util = require('../common/util.js');
 const { omdbtoken } = require('../configuration/access_config.json')[global.env];
 const omdb = new (require('omdbapi'))(omdbtoken);
 const handler = require('../handlers/createevent.js');
-const channels = require('../configuration/channels.json')[global.env];
 
 module.exports = {
     data: new SlashCommandBuilder()

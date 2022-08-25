@@ -2,6 +2,8 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const roles = require('../configuration/roles.json')[global.env];
 const util = require('../common/util.js');
+const statesDB = require('../models/states.js');
+const moviesDB = require('../models/movies.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -13,17 +15,23 @@ module.exports = {
                 .setRequired(true)),
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true });
+        statesDB.changeState('polling', true);
         const vote_duration = interaction.options.getNumber('duration');
         if (!util.userHasAdminRights(interaction.member)) {
             await interaction.editReply({ content: 'You do not have permission to use this command, **you scoundrel**.' });
             return;
         }
-        var movielist = JSON.parse(fs.readFileSync('lists/movies.json'));
-        if (!movielist[interaction.guild.id]['movies']) {
-            interaction.editReply(`The list is empty. Cannot create poll.`);
-            return
-        } else {
-            movielist = movielist[interaction.guild.id]['movies'];
+        const movies = await moviesDB.getMoviesForGuild(interaction.guild.id);
+        var movielist = [];
+        for (let i in movies) {
+            const data = movies[i].get();
+            movielist.push({
+                title: data['title'],
+                year: data['year'],
+                user: data['user'],
+                usertag: data['usertag'],
+                imdbid: data['imdbid']
+            })
         }
         let movieString = '';
         for (let i = 0; i < movielist.length; i++) {
@@ -58,7 +66,7 @@ module.exports = {
                 collectedReactions[react[0]] = react[1].count;
             }
 
-            global.polling = false;
+            statesDB.changeState('polling', false);
             interaction.channel.send(
                 '**__:arrow_up:``This Poll is now closed!``:arrow_up:__**\n' +
                 '**:arrow_down:``        Results:       ``:arrow_down:**'
@@ -130,7 +138,7 @@ module.exports = {
 
             if (places[0]['movies'].length === 1) {
                 embedFieldEliminate.value = `The winner is:\n***${places[0]['movies'][0].title} (${places[0]['movies'][0].year})***!\n`
-                global.nextmovie = places[0]['movies'][0];
+                statesDB.changeState('nextmovie', places[0]['movies'][0]);
             } else {
                 embedFieldEliminate.value = `The top spot is shared by:\n`;
 
@@ -144,7 +152,7 @@ module.exports = {
                     `The movie randomly chosen for the next Movie Night is:\n`;
                 const chosenmovie = places[0]['movies'][util.randInt(0, places[0]['movies'].length)];
                 embedFieldEliminate.value += `***${chosenmovie.title} (${chosenmovie.year})***!\n`
-                global.nextmovie = chosenmovie;
+                statesDB.changeState('nextmovie', chosenmovie);
             }
 
 

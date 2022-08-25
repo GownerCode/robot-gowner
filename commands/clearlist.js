@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const fs = require('fs');
 const util = require('../common/util.js');
+const movieDB = require('../models/movies.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,9 +13,8 @@ module.exports = {
 			await interaction.editReply({ content: 'You do not have permission to use this command.' });
 			return;
 		}
-		const cml = JSON.parse(fs.readFileSync('lists/movies.json'));
-		fs.writeFileSync(`lists/list_backup/${new Date().toISOString().slice(0, 10).replace(/-/g, "")}.json`, JSON.stringify(cml), { flag: 'w' });
-		fs.writeFileSync('lists/movies.json', JSON.stringify({}), { flag: 'w' });
-		interaction.editReply(`The movie list has been cleared.`);
+		movieDB.clearList(interaction.guild);
+		await interaction.editReply(`The movie list has been cleared.`);
+		return;
 	},
 };

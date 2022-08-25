@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const fs = require('fs');
 const util = require('../common/util.js');
+const statesDB = require('../models/states.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -12,7 +13,7 @@ module.exports = {
             await interaction.editReply({ content: 'You do not have permission to use this command.' });
             return;
         }
-        global.submitting = false;
+        await statesDB.changeState('submitting', false);
         await interaction.editReply(`Submissions for the month of ${util.months[new Date().getMonth()]} are now closed!`);
         return;
     },

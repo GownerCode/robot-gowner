@@ -1,4 +1,6 @@
 const fs = require('fs');
+const viewedDB = require('../models/viewed.js');
+const statesDB = require('../models/states.js');
 
 async function handler(interaction) {
     await interaction.deferReply();
@@ -6,32 +8,23 @@ async function handler(interaction) {
     const title = interaction.values[0].split('+.-,')[1];
     const imdbid = interaction.values[0].split('+.-,')[0];
     const year = interaction.values[0].split('+.-,')[2];
-    const viewedlist = JSON.parse(fs.readFileSync('lists/viewed.json'));
 
     await interaction.deleteReply();
 
-    if (!(interaction.guild.id in viewedlist)) {
-        viewedlist[interaction.guild.id] = {
-            watched: []
-        }
-    }
-
-    for (let i = 0; i < viewedlist[interaction.guild.id]['watched'].length; i++) {
-        if (viewedlist[interaction.guild.id]['watched'][i].imdbid === imdbid) {
-            interaction.channel.send(`***${title}*** has *already* been added to the watched list.`);
-            return;
-        }
-    }
-
-    viewedlist[interaction.guild.id]["watched"].push({
+    const watched = await viewedDB.setWatched({
         title: title,
         imdbid: imdbid,
-        year: year,
-        watchdate: new Date().toISOString().slice(0, 10).replace(/-/g, "")
-    })
-    fs.writeFileSync('lists/viewed.json', JSON.stringify(viewedlist));
-    global.nextmovie = null;
-    interaction.channel.send(`***${title}*** has been added to the watched movies list!`);
+        year: year
+    }, interaction.guild);
+
+    if (!watched) {
+        await interaction.channel.send(`***${title}*** is already on the watched list!`);
+        return;
+    } else {
+        statesDB.changeState('nextmovie', 'null');
+        await interaction.channel.send(`***${title}*** has been added to the watched movies list!`);
+        return;
+    }
 }
 
 module.exports = { handler };

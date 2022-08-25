@@ -9,6 +9,8 @@ if (process.env.ENVIRONMENT === 'development') {
 	exit(0);
 }
 
+require('./databaseDriver.js').init();
+
 const fs = require('fs');
 const path = require('path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
@@ -31,34 +33,6 @@ for (const file of commandFiles) {
 	const command = require(filePath);
 	client.commands.set(command.data.name, command);
 }
-
-const states = JSON.parse(fs.readFileSync('states.json'));
-
-global.submitting = states.submitting;
-global.polling = states.polling;
-global.monthly_movies = 8;
-global.nextmovie = states.nextmovie;
-
-setInterval(function () {
-	console.log('Saving states...');
-	fs.writeFileSync('states.json', JSON.stringify({
-		submitting: global.submitting,
-		polling: global.polling,
-		nextmovie: global.nextmovie,
-		monthly_movies: global.monthly_movies
-	}))
-	console.log(`
-	submitting: ${global.submitting}\n
-	polling: ${global.polling}\n
-	nextmovie: ${global.nextmovie.title} (${global.nextmovie.year})\n
-	monthly_movies: ${global.monthly_movies}\n
-	`)
-	console.log('States saved.');
-}, 3600000 / 2);
-
-
-console.log(states);
-
 
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);

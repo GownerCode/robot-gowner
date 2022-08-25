@@ -4,6 +4,8 @@ const path = require('path');
 const util = require('../common/util.js');
 const { omdbtoken } = require('../configuration/access_config.json')[global.env];
 const omdb = new (require('omdbapi'))(omdbtoken);
+const movieDB = require('../models/movies.js');
+const statesDB = require('../models/states.js');
 
 const MOVIE_VOTE_CHANNEL_ID = '1005016756206698526';
 
@@ -21,11 +23,15 @@ module.exports = {
                 .setRequired(false)),
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true });
-        if (!global.submitting && !global.polling) {
+
+        const submitting = await statesDB.getState('submitting');
+        const polling = await statesDB.getState('polling');
+
+        if (!(submitting.get()['data'] === 'true') && !(polling.get()['data'] === 'true')) {
             await interaction.editReply({ content: `:robot: <@${interaction.user.id}> - Beep Boop! Submissions are currently closed. They will re-open next month!` });
             return;
         }
-        else if (!global.submitting && global.polling) {
+        else if (!(submitting.get()['data'] === 'true') && polling.get()['data'] === 'true') {
             await interaction.editReply({ content: `:robot: <@${interaction.user.id}> - Beep Boop! Submissions are closed. Please head to ${interaction.guild.channels.cache.get(MOVIE_VOTE_CHANNEL_ID).toString()} to cast your vote!` });
             return;
         }
@@ -44,7 +50,7 @@ module.exports = {
             var user = interaction.user;
         }
 
-        const added = util.userHasMovie(interaction, user)
+        const added = await movieDB.userHasMovie(user, interaction.guild);
         if (added) {
             await interaction.editReply(`<@${user.id}> - You have already added a movie this month:\n` +
                 `***${added.title} (${added.year})***\n` +
@@ -65,31 +71,20 @@ module.exports = {
                 return;
             }
 
-            omdb.get({
-                id: query,
-                type: 'movie'
-            }).then((result) => {
-                const movielist = JSON.parse(fs.readFileSync('./lists/movies.json'));
-                if (!(interaction.guild.id in movielist)) {
-                    movielist[interaction.guild.id] = {
-                        movies: []
-                    }
-                }
-                movielist[interaction.guild.id]["movies"].push({
-                    title: result.title,
-                    imdbid: result.imdbid,
-                    user: user.id,
-                    usertag: user.tag,
-                    year: result.year
+            try {
+                const result = await omdb.get({
+                    id: query,
+                    type: 'movie'
                 })
-                fs.writeFileSync('lists/movies.json', JSON.stringify(movielist));
+                await movieDB.addMovie(result, user, interaction.guild);
                 interaction.editReply(`***${result.title} (${result.year})*** was added to the list by <@${user.id}>!`);
                 return;
-
-            }).catch(function (error) {
+            } catch (error) {
                 console.log(error);
-                interaction.editReply({ content: `No movies found for your link. Please double check you're adding a movie and not a TV show or other media.` });
-            })
+                await interaction.editReply({ content: `No movies found for your link. Please double check you're adding a movie and not a TV show or other media.` });
+                return;
+            }
+
         } else {
 
             var query = interaction.options.getString('movie');

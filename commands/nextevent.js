@@ -3,6 +3,7 @@ const fs = require('fs');
 const util = require('../common/util.js');
 const roles = require('../configuration/roles.json')[global.env];
 const channels = require('../configuration/channels.json')[global.env];
+const statesDB = require('../models/states.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,13 +22,14 @@ module.exports = {
         }
 
         const next = util.getNextEventTimestamp();
-
+        var nextMovie = await statesDB.getState('nextmovie');
+        nextMovie = JSON.parse(nextMovie.get()['data']);
         let replyString = ``
         replyString +=
             `The next ${mention ? `<@&${roles.movie_night_role_id}>` : 'Movie Night'} will be on\n**<t:${next}:f> (<t:${next}:R>)**\n`;
-        if (global.nextmovie != null) {
+        if (nextMovie != null) {
             replyString +=
-                `We will be watching\n***${global.nextmovie.title} (${global.nextmovie.year})***\n`
+                `We will be watching\n***${nextMovie.title} (${nextMovie.year})***\n`
         } else {
             replyString +=
                 `The next movie has not been determined yet. Keep an eye out for messages in <#${channels.movie_info_channel}>!\n`

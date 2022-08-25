@@ -1,6 +1,7 @@
 const { omdbtoken } = require('../configuration/access_config.json')[global.env];
 const omdb = new (require('omdbapi'))(omdbtoken);
 const fs = require('fs');
+const movieDB = require('../models/movies.js');
 
 async function handler(interaction) {
     const imdbid = interaction.values[0].split('+.-,')[0];
@@ -12,20 +13,18 @@ async function handler(interaction) {
     const userid = interaction.values[0].split('+.-,')[2];
     const usertag = interaction.values[0].split('+.-,')[3];
 
-    const movielist = JSON.parse(fs.readFileSync('lists/movies.json'));
-    if (!(interaction.guild.id in movielist)) {
-        movielist[interaction.guild.id] = {
-            movies: []
-        }
+    const user = {
+        id: userid,
+        tag: usertag
     }
-    movielist[interaction.guild.id]["movies"].push({
+
+    const movie = {
         title: title,
+        year: year,
         imdbid: imdbid,
-        user: userid,
-        usertag: usertag,
-        year: year
-    })
-    fs.writeFileSync('lists/movies.json', JSON.stringify(movielist));
+    }
+
+    await movieDB.addMovie(movie, user, interaction.guild);
     interaction.reply(`***${title}*** was added to the list by <@${userid}>!`);
 }
 

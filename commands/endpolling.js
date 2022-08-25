@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const fs = require('fs');
 const util = require('../common/util.js');
+const statesDB = require('../models/states.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -12,7 +13,7 @@ module.exports = {
             await interaction.editReply({ content: 'You do not have permission to use this command.' });
             return;
         }
-        global.polling = false;
+        await statesDB.changeState('polling', false);
         await interaction.editReply(`Polling state ended.`);
         return;
     },

@@ -2,6 +2,8 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const util = require('../common/util.js')
 const roles = require('../configuration/roles.json')[global.env];
+const statesDB = require('../models/states.js');
+const moviesDB = require('../models/movies.js')
 
 function lowestRated(n, places) {
     let keys = Object.keys(places);
@@ -28,12 +30,26 @@ module.exports = {
                 .setRequired(true)),
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true });
+        var monthlyMovies = await statesDB.getState('monthly_movies');
+        monthlyMovies = parseInt(monthlyMovies.get()['data']);
         const vote_duration = interaction.options.getNumber('duration');
         if (!util.userHasAdminRights(interaction.member)) {
             await interaction.editReply({ content: 'You do not have permission to use this command, you scoundrel.' });
             return;
         }
-        const movielist = JSON.parse(fs.readFileSync('./lists/movies.json'))[interaction.guild.id]['movies'];
+        const movies = await moviesDB.getMoviesForGuild(interaction.guild.id);
+        var movielist = [];
+        for (let i in movies) {
+            const data = movies[i].get();
+            movielist.push({
+                title: data['title'],
+                year: data['year'],
+                user: data['user'],
+                usertag: data['usertag'],
+                imdbid: data['imdbid']
+            })
+        }
+        //JSON.parse(fs.readFileSync('./lists/movies.json'))[interaction.guild.id]['movies'];
         let movieString = '';
         for (let i = 0; i < movielist.length; i++) {
             movieString += `${util.reactlist[i]} - ***${movielist[i].title} (${movielist[i].year})***\n\n`
@@ -61,8 +77,8 @@ module.exports = {
         await interaction.editReply('Poll created. Polling = true; submitting = false!');
         const collector = message.createReactionCollector({ time: vote_duration * 60 * 60 * 1000 });
 
-        global.polling = true;
-        global.submitting = false;
+        await statesDB.changeState('submitting', false);
+        await statesDB.changeState('polling', true);
 
         collector.on('end', (collected) => {
             let collectedReactions = {};
@@ -70,7 +86,7 @@ module.exports = {
                 collectedReactions[react[0]] = react[1].count;
             }
 
-            global.polling = false;
+            statesDB.changeState('polling', false);
             interaction.channel.send(
                 '**__:arrow_up:``This Poll is now closed!``:arrow_up:__**\n' +
                 '**:arrow_down:``        Results:       ``:arrow_down:**'
@@ -132,7 +148,8 @@ module.exports = {
             }
 
             embedFieldEliminate = { name: 'Eliminating excess movies:' }
-            movieOverflow = movielist.length - global.monthly_movies;
+
+            movieOverflow = movielist.length - monthlyMovies;
             if (movieOverflow <= 0) {
                 embedFieldEliminate.value = 'No movies need to be eliminated. BEEP BOOP <- This is Robospeak for HOORAY!';
             } else {

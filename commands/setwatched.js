@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, SelectMenuBuilder } = require('discord.js');
 const fs = require('fs');
 const util = require('../common/util.js');
+const movieDB = require('../models/movies.js')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -12,10 +13,14 @@ module.exports = {
             await interaction.editReply({ content: 'You do not have permission to use this command.' });
             return;
         }
-        const movielist = JSON.parse(fs.readFileSync('./lists/movies.json'));
-        if (interaction.guild.id in movielist && movielist[interaction.guild.id]['movies'].length > 0) {
+
+        const movielist = await movieDB.getMoviesForGuild(interaction.guild.id);
+
+        if (movielist.length > 0) {
             let options = []
-            movielist[interaction.guild.id]['movies'].forEach(movie => {
+            movielist.forEach(movie => {
+                movie = movie.get();
+                console.log(movie)
                 options.push({
                     label: movie.title + ` (${movie.year})`,
                     value: `${movie.imdbid}+.-,${movie.title}+.-,${movie.year}`

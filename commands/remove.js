@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const fs = require('fs');
 const util = require('../common/util.js');
+const movieDB = require('../models/movies.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -27,7 +28,7 @@ module.exports = {
             var user = interaction.user;
         }
 
-        const removed = util.removeMovieByUser(interaction, user.id);
+        const removed = await movieDB.removeMovie(user, interaction.guild);
         if (removed) {
             await interaction.editReply(`<@${user.id}>, your movie, ***${removed.title} (${removed.year})***  has been removed from the list!`);
             return;
