@@ -2,6 +2,7 @@ const { omdbtoken } = require('../configuration/access_config.json')[global.env]
 const omdb = new (require('omdbapi'))(omdbtoken);
 const util = require('../common/util.js');
 const channels = require('../configuration/channels.json')[global.env];
+const statesDB = require('../models/states.js');
 
 async function handler(interaction) {
     if (interaction.isSelectMenu()) {
@@ -35,15 +36,22 @@ async function handler(interaction) {
         const descript = event[1].description;
         const id = event[1].id;
 
-        if (next === time && name === 'Movie Night') {
+        let nextMovie = await statesDB.getState('nextmovie');
+        nextMovie = JSON.parse(nextMovie.get()['data']);
+        nextMovie = nextMovie === 'null' ? null : nextMovie;
+
+        const titlePattern = /Movie Night/;
+
+        if (next === time && name.match(titlePattern)) {
             const regex = /\*\*.+\*\*/;
-            if (!descript.match(regex) && global.nextmovie != null) {
+            if (!descript.match(regex) && nextMovie != null) {
                 interaction.guild.scheduledEvents.edit(await interaction.guild.scheduledEvents.fetch(id), {
                     description: `The next Movie Night is soon!\n` +
-                        `We will be watching **${global.nextmovie.title} (${global.nextmovie.year})**.\n` +
-                        `Just hop on the movie voice channel to watch with us. See you then!`
+                        `Movie: **${nextMovie.title} (${nextMovie.year})**.\n` +
+                        `To watch the movie with us, join <#${channels.movie_voice_channel}> <t:${next / 1000}:R>!`,
+                    name: `Movie Night - ${nextMovie.title} (${nextMovie.year})`
                 });
-                await interaction.editReply(`The event has been updated with the movie **${global.nextmovie.title} (${global.nextmovie.year})**.`);
+                await interaction.editReply(`The event has been updated with the movie **${nextMovie.title} (${nextMovie.year})**.`);
                 return;
             }
             await interaction.editReply(`There is already a Movie Night scheduled for <t:${next / 1000}:f>.`);
@@ -51,18 +59,25 @@ async function handler(interaction) {
         }
     }
 
+    let nextMovie = await statesDB.getState('nextmovie');
+    nextMovie = JSON.parse(nextMovie.get()['data']);
+    nextMovie = nextMovie === 'null' ? null : nextMovie;
 
-    const name = 'Movie Night';
+
     let description = `The next Movie Night is soon!\n`;
     if (movie) {
-        description += `We will be watching **${movie.title} (${movie.year})**.\n`;
+        description += `Movie: **${movie.title} (${movie.year})**\n`;
+        var name = `Movie Night - ${movie.title} (${movie.year})`;
     } else {
-        if (global.nextmovie != null) {
-            description += `We will be watching **${global.nextmovie.title} (${global.nextmovie.year})**.\n`
+        if (nextMovie != null) {
+            description += `Movie: **${nextMovie.title} (${nextMovie.year})**\n`;
+            var name = `Movie Night - ${nextMovie.title} (${nextMovie.year})`;
+        } else {
+            var name = `Movie Night`;
         }
     }
 
-    description += `Just hop on the movie voice channel to watch with us. See you then!`
+    description += `To watch the movie with us, join <#${channels.movie_voice_channel}> <t:${next / 1000}:R>!`
 
     const c = await interaction.guild.channels.fetch(channels.movie_voice_channel);
 

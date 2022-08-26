@@ -15,15 +15,18 @@ module.exports = {
                 .setRequired(false)),
     async execute(interaction) {
         await interaction.deferReply();
-        if (!interaction.member.roles.cache.has('993328798227513384') && !interaction.member.roles.cache.has('1003394475621630032')) {
+        if (!util.userHasAdminRights(interaction.member)) {
             var mention = false;
         } else {
             var mention = interaction.options.getBoolean('mention');
         }
 
         const next = util.getNextEventTimestamp();
+
         var nextMovie = await statesDB.getState('nextmovie');
         nextMovie = JSON.parse(nextMovie.get()['data']);
+        nextMovie = nextMovie === 'null' ? null : nextMovie;
+
         let replyString = ``
         replyString +=
             `The next ${mention ? `<@&${roles.movie_night_role_id}>` : 'Movie Night'} will be on\n**<t:${next}:f> (<t:${next}:R>)**\n`;
