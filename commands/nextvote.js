@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const fs = require('fs');
-const roles = require('../configuration/roles.json')[global.env];
+const roles = require('../configuration/roles.json');
 const util = require('../common/util.js');
 const statesDB = require('../models/states.js');
 const moviesDB = require('../models/movies.js');
@@ -54,7 +53,7 @@ module.exports = {
             .setFooter({ text: 'Beep Boop - A service provided by Robot-Gowner', iconURL: 'http://gownerjones.com/images/avatar.jpg' });
 
         await interaction.editReply({ content: 'Creating poll...', ephemeral: true });
-        await interaction.channel.send(`<@&${roles.movie_night_role_id}>`);
+        await interaction.channel.send(`<@&${roles[interaction.guild.id].movie_night_role_id}>`);
         var message = await interaction.channel.send({ embeds: [movieVote] });
 
         await interaction.editReply('Poll created.');
@@ -71,7 +70,7 @@ module.exports = {
                 '**__:arrow_up:``This Poll is now closed!``:arrow_up:__**\n' +
                 '**:arrow_down:``        Results:       ``:arrow_down:**'
             );
-            interaction.channel.send(`<@&${roles.movie_night_role_id}>`);
+            interaction.channel.send(`<@&${roles[interaction.guild.id].movie_night_role_id}>`);
             let orderedReacts = Object.entries(collectedReactions).sort((a, b) => b[1] - a[1]);
             let places = {};
             /*

@@ -1,8 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const fs = require('fs');
 const util = require('../common/util.js');
-const roles = require('../configuration/roles.json')[global.env];
-const channels = require('../configuration/channels.json')[global.env];
 const statesDB = require('../models/states.js');
 
 module.exports = {

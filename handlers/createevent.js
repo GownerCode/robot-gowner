@@ -48,7 +48,7 @@ async function handler(interaction) {
                 interaction.guild.scheduledEvents.edit(await interaction.guild.scheduledEvents.fetch(id), {
                     description: `The next Movie Night is soon!\n` +
                         `Movie: **${nextMovie.title} (${nextMovie.year})**.\n` +
-                        `To watch the movie with us, join <#${channels.movie_voice_channel}> <t:${next / 1000}:R>!`,
+                        `To watch the movie with us, join <#${channels[interaction.guild.id].movie_voice_channel}> <t:${next / 1000}:R>!`,
                     name: `Movie Night - ${nextMovie.title} (${nextMovie.year})`
                 });
                 await interaction.editReply(`The event has been updated with the movie **${nextMovie.title} (${nextMovie.year})**.`);
@@ -77,9 +77,9 @@ async function handler(interaction) {
         }
     }
 
-    description += `To watch the movie with us, join <#${channels.movie_voice_channel}> <t:${next / 1000}:R>!`
+    description += `To watch the movie with us, join <#${channels[interaction.guild.id].movie_voice_channel}> <t:${next / 1000}:R>!`
 
-    const c = await interaction.guild.channels.fetch(channels.movie_voice_channel);
+    const c = await interaction.guild.channels.fetch(channels[interaction.guild.id].movie_voice_channel);
 
     const event = await interaction.guild.scheduledEvents.create({
         name: name,

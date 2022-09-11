@@ -6,8 +6,8 @@ const { omdbtoken } = require('../configuration/access_config.json')[global.env]
 const omdb = new (require('omdbapi'))(omdbtoken);
 const movieDB = require('../models/movies.js');
 const statesDB = require('../models/states.js');
+const channels = require('../configuration/channels.json')
 
-const MOVIE_VOTE_CHANNEL_ID = '1005016756206698526';
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -22,6 +22,7 @@ module.exports = {
                 .setDescription('The user in whose name you are adding a movie (Admins only).')
                 .setRequired(false)),
     async execute(interaction) {
+        const MOVIE_VOTE_CHANNEL_ID = channels[interaction.guild.id]['movie_info_channel'];
         await interaction.deferReply({ ephemeral: true });
 
         const submitting = await statesDB.getState('submitting');

@@ -43,9 +43,9 @@ function randInt(min, max) {
 }
 
 function userHasAdminRights(member) {
-    const roles = require('../configuration/roles.json')[global.env];
-    for (let i = 0; i < roles.movie_admin_role_ids.length; i++) {
-        const id = roles.movie_admin_role_ids[i];
+    const roles = require('../configuration/roles.json');
+    for (let i = 0; i < roles[member.guild.id].movie_admin_role_ids.length; i++) {
+        const id = roles[member.guild.id].movie_admin_role_ids[i];
         if (member.roles.cache.has(id)) {
             return true;
         }
